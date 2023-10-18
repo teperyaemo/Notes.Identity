@@ -56,8 +56,8 @@ namespace Notes.Identity
                         "NotesWebAPI"
                     },
                     AllowAccessTokensViaBrowser = true
-                    
+
                 }
-            }
+            };
     }
 }
