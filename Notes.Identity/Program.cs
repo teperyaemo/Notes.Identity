@@ -2,6 +2,7 @@ using IdentityServer4.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 using Notes.Identity;
 using Notes.Identity.Data;
 using Notes.Identity.Models;
@@ -43,7 +44,9 @@ public class Program
             config.Cookie.Name = "Notes.Identity.Cookie";
             config.LoginPath = "/Auth/Login";
             config.LogoutPath = "/Auth/Logout";
-        })
+        });
+
+        builder.Services.AddControllersWithViews();
 
         var app = builder.Build();
 
@@ -63,8 +66,19 @@ public class Program
             }
         }
 
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(
+                Path.Combine(app.Environment.ContentRootPath, "Styles")),
+            RequestPath = "/styles"
+        });
+
+        app.UseRouting();
         app.UseIdentityServer();
-        app.MapGet("/", () => "Hello World!");
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapDefaultControllerRoute();
+        });
 
         app.Run();
     }
