@@ -52,5 +52,37 @@ namespace Notes.Identity.Controllers
             ModelState.AddModelError(string.Empty, "Login error");
             return View(viewModel);
         }
+
+        [HttpGet]
+        public IActionResult Register(string returnUrl)
+        {
+            var viewModel = new RegisterViewModel
+            {
+                ReturnUrl = returnUrl
+            };
+            return View(returnUrl);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(viewModel);
+            }
+
+            var user = new AppUser
+            {
+                UserName = viewModel.Username
+            };
+             var result = await _userManager.CreateAsync(user, viewModel.Password);
+            if (result.Succeeded)
+            {
+                await _signInManager.SignInAsync(user, false);
+                return Redirect(viewModel.ReturnUrl);
+            }
+            ModelState.AddModelError(string.Empty, "Error occured");
+            return View(viewModel);
+        }
     }
 }
