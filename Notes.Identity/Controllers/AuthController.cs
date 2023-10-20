@@ -84,5 +84,13 @@ namespace Notes.Identity.Controllers
             ModelState.AddModelError(string.Empty, "Error occured");
             return View(viewModel);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Logout(string logoutId)
+        {
+            await _signInManager.SignOutAsync();
+            var logoutRequest = await _interactionService.GetLogoutContextAsync(logoutId);
+            return Redirect(logoutRequest.PostLogoutRedirectUri);
+        }
     }
 }
